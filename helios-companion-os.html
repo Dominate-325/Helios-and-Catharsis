@@ -815,6 +815,31 @@
         .intro.redline-on .redline { opacity: 1; }
         .intro.redline-on .redline path { stroke-dashoffset: 0; transition: stroke-dashoffset 2.6s cubic-bezier(0.55, 0, 0.35, 1); }
         .intro.redline-off .redline { opacity: 0; }
+   /* ================= 极简白底窗户定制 ================= */
+/* 1. 干掉全屏大雾，一打开网页直接播放 */
+#fog, .scene-outside, .rain-canvas, .redline { display: none !important; }
+.intro, .intro-bg { background: #FFFFFF !important; }
+.intro::after, .intro-bg::after { display: none !important; }
+
+/* 2. 把窗户变成白底黑框 */
+.window {
+    background: #FFFFFF !important;
+    border-color: #17181A !important; /* 黑色边框 */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1) !important;
+}
+.pane { display: none !important; } /* 把玻璃门去掉，因为外面没有背景了 */
+.window-bar { display: none !important; }
+
+/* 3. 文字和打字光标改黑色 */
+.quote { color: #17181A !important; text-shadow: none !important; }
+.caret { background: #17181A !important; }
+
+/* 4. 按钮改黑字白底 */
+.intro-btn { 
+    color: #17181A !important; 
+    border-color: #17181A !important; 
+    background: rgba(255,255,255,0.8) !important; 
+}
     </style>
 </head>
 <body>
