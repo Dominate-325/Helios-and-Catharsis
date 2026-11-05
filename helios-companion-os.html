@@ -815,31 +815,6 @@
         .intro.redline-on .redline { opacity: 1; }
         .intro.redline-on .redline path { stroke-dashoffset: 0; transition: stroke-dashoffset 2.6s cubic-bezier(0.55, 0, 0.35, 1); }
         .intro.redline-off .redline { opacity: 0; }
-   /* ================= 极简白底窗户定制 ================= */
-/* 1. 干掉全屏大雾，一打开网页直接播放 */
-#fog, .scene-outside, .rain-canvas, .redline { display: none !important; }
-.intro, .intro-bg { background: #FFFFFF !important; }
-.intro::after, .intro-bg::after { display: none !important; }
-
-/* 2. 把窗户变成白底黑框 */
-.window {
-    background: #FFFFFF !important;
-    border-color: #17181A !important; /* 黑色边框 */
-    box-shadow: 0 10px 40px rgba(0,0,0,0.1) !important;
-}
-.pane { display: none !important; } /* 把玻璃门去掉，因为外面没有背景了 */
-.window-bar { display: none !important; }
-
-/* 3. 文字和打字光标改黑色 */
-.quote { color: #17181A !important; text-shadow: none !important; }
-.caret { background: #17181A !important; }
-
-/* 4. 按钮改黑字白底 */
-.intro-btn { 
-    color: #17181A !important; 
-    border-color: #17181A !important; 
-    background: rgba(255,255,255,0.8) !important; 
-}
     </style>
 </head>
 <body>
@@ -4251,20 +4226,37 @@
             }
 
             // 点击雾气玻璃 → 水滴扩散开 → 红线画圈 → 窗户
-                        function openFog(event) {
+            function openFog(event) {
                 if (opened) return;
                 opened = true;
 
-                // 不需要大雾点击特效，直接开始
-                intro.classList.add('reveal');
+                const x = (event && typeof event.clientX === 'number') ? event.clientX : window.innerWidth / 2;
+                const y = (event && typeof event.clientY === 'number') ? event.clientY : window.innerHeight / 2;
 
-                // 新的时间轴（更快，保留窗户、伞、文字、按钮）
-                stage('s3', 500);    // 0.5秒：窗户出现
-                stage('s4', 1500);   // 1.5秒：开窗
-                stage('s5', 2500);   // 2.5秒：雨伞浮现
-                stage('s7', 4000);   // 4.0秒：文字淡入
-                setTimeout(typeQuote, 4200); // 4.2秒：开始打字
-                stage('s8', 6500);   // 6.5秒：居中按钮出现
+                intro.style.setProperty('--cx', x + 'px');
+                intro.style.setProperty('--cy', y + 'px');
+
+                const ring = document.getElementById('drop-ring');
+                if (ring) {
+                    ring.style.left = x + 'px';
+                    ring.style.top = y + 'px';
+                    ring.classList.add('go');
+                }
+
+                intro.classList.add('reveal');
+                if (rainFx) rainFx.start();
+
+                stage('redline-on', 1500);    // 红线从右往左画，绕成一个圈
+                stage('redline-off', 4300);   // 红线消失
+                stage('s3', 5000);            // 窗户出现
+                stage('s4', 6000);            // 开窗 + 推向窗外，开始下雨
+                stage('s5', 7200);            // 雨伞浮现
+                stage('s6', 9200);            // 雨停伞收
+                stage('s7', 9700);            // 文字淡入
+                setTimeout(typeQuote, 9900);
+                stage('s9', 12200);           // 文字消散
+                stage('s8', 13200);           // 居中按钮
+                setTimeout(function () { if (rainFx) rainFx.stop(); }, 11200);
             }
 
             if (fog) fog.addEventListener('click', openFog);
